@@ -6,9 +6,9 @@ product model provides flexibility to perform CRUD operations on product entity
 users model provides flexibility to perform CRUD operations on user entity and also for handling login
 
 ### Fetures
-hashing of password
-data validation using mongoose
-token generation
-token validation
-error handling
-unit testing
+1. hashing of password
+2. data validation using mongoose
+3. token generation
+4. token validation
+5. error handling
+6. unit testing
