@@ -5,7 +5,7 @@ This app is built using express framework and mongo db
 product model provides flexibility to perform CRUD operations on product entity
 users model provides flexibility to perform CRUD operations on user entity and also for handling login
 
-### Fetures
+### Features
 1. hashing of password
 2. data validation using mongoose
 3. token generation
