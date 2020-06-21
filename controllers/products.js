@@ -1,5 +1,6 @@
 const Product=require('../models/product');
 const User=require('../models/user');
+const errorHandler=require('../middleware/errorHandler');
 
 // This will create a product in data base
 exports.createProduct=(req,res,next)=>{
@@ -24,9 +25,9 @@ exports.createProduct=(req,res,next)=>{
             })
         })
         .catch(error=>{
-            res.status(500).json({
-                "error":error
-            })
+            req.errorCode=500;
+            req.errorMessage=error;
+            errorHandler.errorHandling(req,res);
         })
 }
 
@@ -46,16 +47,9 @@ exports.getProduct=(req,res)=>{
             })
         })
         .catch(error=>{
-            if(error.errorCode){
-                res.status(error.errorCode).json({
-                    "message":error.message
-                })
-            }
-            else{
-                res.status(500).json({
-                    "message":error
-                })
-            }
+            req.errorCode=500;
+            req.errorMessage=error;
+            errorHandler.errorHandling(req,res);
         })
 }
 
@@ -67,7 +61,6 @@ exports.updateProduct=(req,res)=>{
             {
                 let error={}
                 error.message="product not found";
-                error.errorCode=404;
                 throw error;
             }
             result.title=req.body.title;
@@ -82,22 +75,15 @@ exports.updateProduct=(req,res)=>{
                     "productId":product._id
                 })
             .catch(error=>{
-            res.status(500).json({
-                "error":error
+                req.errorCode=500;
+                req.errorMessage=error;
+                errorHandler.errorHandling(req,res);
             })
         })
-        })
         .catch(error=>{
-            if(error.errorCode){
-                res.status(error.errorCode).json({
-                    "message":error.message
-                })
-            }
-            else{
-                res.status(500).json({
-                    "message":error
-                })
-            }
+            req.errorCode=500;
+            req.errorMessage=error;
+            errorHandler.errorHandling(req,res);
         })
 }
 
@@ -115,16 +101,8 @@ Product.findByIdAndRemove(req.params.productId)
         })
         )
     .catch(error=>{
-        console.log(error);
-        if(error.errorCode){
-            res.status(error.errorCode).json({
-                "message":error.message
-            })
-        }
-        else{
-            res.status(500).json({
-                "message":error
-            })
-        }
+        req.errorCode=500;
+        req.errorMessage=error;
+        errorHandler.errorHandling(req,res);
     })
 }

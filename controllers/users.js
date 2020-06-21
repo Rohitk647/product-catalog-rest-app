@@ -1,4 +1,5 @@
 const User=require('../models/user');
+const errorHandler=require('../middleware/errorHandler');
 const jwt=require('jsonwebtoken');
 const crypto=require('crypto');
 const secret = 'simplehash';
@@ -16,7 +17,9 @@ exports.createUser = (req,res,next)=>{
             "message":"user is created"})
     })   
     .catch(error=>{
-        console.log(error);
+        req.errorCode=500;
+        req.errorMessage=error;
+        errorHandler.errorHandling(req,res);
     })
 }
 
@@ -40,6 +43,8 @@ exports.loginUser = (req,res,next)=>{
         }
 })
 .catch(error=>{
-    console.log(error);
+    req.errorCode=500;
+    req.errorMessage=error;
+    errorHandler.errorHandling(req,res);
 })
 }

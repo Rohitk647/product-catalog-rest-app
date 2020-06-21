@@ -1,4 +1,5 @@
 const jwt=require("jsonwebtoken");
+const errorHandler=require('./errorHandler');
 
 exports.validate = (req,res,next)=>{
     try{
@@ -10,9 +11,9 @@ exports.validate = (req,res,next)=>{
         }
     }
     catch(error){
-        res.status(401).json({
-            "message":"user is not authorized"
-        })
+        req.errorCode=401;
+        req.errorMessage="user is not authorized";
+        errorHandler.errorHandling(req,res);
     }
     
 }

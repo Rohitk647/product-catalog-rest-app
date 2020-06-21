@@ -1,7 +1,9 @@
 const express=require('express');
 const router = express.Router();
+
 // get the middleware functions
 const validateRequest=require('../middleware/isValidRequest');
+
 // get the controllers
 const productsController=require('../controllers/products');
 // identify the paths 
