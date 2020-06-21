@@ -16,7 +16,13 @@ const usersSchema=new schema({
         type:String,
         unique: true,
         required: true
-    }
+    },
+    posts:[
+        {
+            type:schema.Types.ObjectId,
+            ref:'product'
+        }
+    ]
 });
 
 module.exports=mongoose.model('user',usersSchema);

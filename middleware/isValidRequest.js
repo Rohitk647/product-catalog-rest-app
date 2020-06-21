@@ -4,7 +4,8 @@ exports.validate = (req,res,next)=>{
     try{
         const token=req.get('Authorization').split(' ')[1];
         if(token){
-            jwt.verify(token,'supersecret');
+            let metadata=jwt.verify(token,'supersecret');
+            req.userId=metadata.id
             next();
         }
     }

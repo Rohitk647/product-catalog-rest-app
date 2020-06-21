@@ -1,4 +1,5 @@
 const Product=require('../models/product');
+const User=require('../models/user');
 
 // This will create a product in data base
 exports.createProduct=(req,res,next)=>{
@@ -6,14 +7,20 @@ exports.createProduct=(req,res,next)=>{
         title:req.body.title,
         category:req.body.category,
         image:req.body.image,
-        price:req.body.price
+        price:req.body.price,
+        creator:req.userId
     });
     product.save()
         .then(result=>{
-            console.log(result);
-            res.status(201).json({
-                "message":"product is created",
-                "productId":result._id
+            User.findOne({_id:req.userId})
+                .then(user=>{
+                    user.posts.push(result);
+                    user.save();
+                    res.status(201).json({
+                    "message":"product is created",
+                    "productId":result._id,
+                    "creater":user.username
+                })
             })
         })
         .catch(error=>{
@@ -25,7 +32,7 @@ exports.createProduct=(req,res,next)=>{
 
 // this will get the product by id
 exports.getProduct=(req,res)=>{
-    Product.findById(req.params.productId)
+    Product.findOne({_id:req.params.productId})
         .then(result=>{
             if(!result)
             {
@@ -96,45 +103,28 @@ exports.updateProduct=(req,res)=>{
 
 // this will delete the product by id
 exports.deleteProduct=(req,res)=>{
-    // Product.findById(req.params.productId)
-    //     .then(result=>{
-    //         if(!result)
-    //         {
-    //             let error={}
-    //             error.message="product not found";
-    //             error.errorCode=404;
-    //             throw error;
-    //         }
-            Product.findByIdAndRemove(req.params.productId)
-                .then(result=>
-                    res.status(200).json({
-                        result
-                    })
-                    )
-                .catch(error=>{
-                    console.log(error);
-                    if(error.errorCode){
-                        res.status(error.errorCode).json({
-                            "message":error.message
-                        })
-                    }
-                    else{
-                        res.status(500).json({
-                            "message":error
-                        })
-                    }
-                })
-        // })
-        // .catch(error=>{
-        //     if(error.errorCode){
-        //         res.status(error.errorCode).json({
-        //             "message":error.message
-        //         })
-        //     }
-        //     else{
-        //         res.status(500).json({
-        //             "message":error
-        //         })
-        //     }
-        // })
+Product.findByIdAndRemove(req.params.productId)
+    .then(result=>
+        User.findOne({_id:req.userId})
+        .then(user=>{
+            user.posts.pull(req.params.productId);
+            user.save();
+            res.status(200).json({
+                "message":"product is deleted"
+            })
+        })
+        )
+    .catch(error=>{
+        console.log(error);
+        if(error.errorCode){
+            res.status(error.errorCode).json({
+                "message":error.message
+            })
+        }
+        else{
+            res.status(500).json({
+                "message":error
+            })
+        }
+    })
 }
